@@ -189,3 +189,14 @@ function Qualify-Path($path) {
     
     $result
 }
+
+function Remove-EmptyFolders {
+    Get-ChildItem . -Recurse |
+        Where-Object { $_.PSIsContainer } |
+        Where-Object { $_.GetFileSystemInfos().Count -eq 0 } |
+        Sort-Object -Property @{Expression={$_.FullName.Length}} -Descending | % {
+            Write-Verbose $_.FullName
+            Remove-Item $_.FullName
+        }
+}
+
